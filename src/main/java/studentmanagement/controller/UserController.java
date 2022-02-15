@@ -202,7 +202,7 @@ public class UserController {
 
 			if (!fileName.isEmpty()) {
 				String dir = "./images/" + dto.getId() + "/";
-				Path delPath = Paths.get("." + dto.getImg());
+				Path delPath = Paths.get("." + uService.findByIdOrName(dto.getId(), "").get(0).getImg());
 				Path newPath = Paths.get(dir);
 				Path filePath = newPath.resolve(fileName);
 
