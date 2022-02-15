@@ -27,7 +27,8 @@ public class StudentService {
 		return studentRepo.findByStudentIdOrStudentNameOrClassName(studentId, studentName, className);
 	}
 	
-	public void save(StudentDTO dto) {
-		studentRepo.save(dto);
+	//save has return to test with junit
+	public StudentDTO save(StudentDTO dto) {
+		return studentRepo.save(dto);
 	}
 }

@@ -110,12 +110,12 @@ public class UserController {
 	}
 
 	@PostMapping("/userAdd")
-	public String userAdd(@ModelAttribute("bean") @Validated UserBean bean,
-			BindingResult br, ModelMap model) {
+	public String userAdd(@ModelAttribute("bean") @Validated UserBean bean, BindingResult br, ModelMap model)
+			throws IOException {
 		if (br.hasErrors()) {
 			return "USR002";
 		}
-		
+
 		MultipartFile img = bean.getImg();
 		UserDTO dto = new UserDTO();
 		if (bean.getPassword().equals(bean.getConPwd())) {
@@ -146,13 +146,9 @@ public class UserController {
 					}
 				}
 				Path filePath = path.resolve(fileName);
-				try {
-					InputStream inputStream = img.getInputStream();
-					Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				InputStream inputStream = img.getInputStream();
+				Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+
 				dto.setImg("/images/" + dto.getId() + "/" + fileName);
 
 				uService.save(dto);
@@ -188,8 +184,8 @@ public class UserController {
 	}
 
 	@PostMapping("/userUpdate")
-	public String userUpdate(@ModelAttribute("bean") @Validated UserBean bean,
-			BindingResult br, ModelMap model) {
+	public String userUpdate(@ModelAttribute("bean") @Validated UserBean bean, BindingResult br, ModelMap model)
+			throws IOException {
 		if (br.hasErrors()) {
 			return "USR002-01";
 		}
@@ -209,15 +205,12 @@ public class UserController {
 				Path delPath = Paths.get("." + dto.getImg());
 				Path newPath = Paths.get(dir);
 				Path filePath = newPath.resolve(fileName);
-				try {
-					Files.deleteIfExists(delPath);
-					InputStream inputStream = img.getInputStream();
-					Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-					dto.setImg("/images/" + dto.getId() + "/" + fileName);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+				Files.deleteIfExists(delPath);
+				InputStream inputStream = img.getInputStream();
+				Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+				dto.setImg("/images/" + dto.getId() + "/" + fileName);
+
 			} else {
 				dto.setImg(uService.findByIdOrName(dto.getId(), "").get(0).getImg());
 			}
@@ -269,7 +262,7 @@ public class UserController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=UsersReport.pdf");
-		
+
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(dataPDF);
 	}
 }

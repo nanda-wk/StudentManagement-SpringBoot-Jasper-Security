@@ -52,4 +52,12 @@ public class StudentDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	@Override
+	public String toString() {
+		return "StudentDTO [studentId=" + studentId + ", studentName=" + studentName + ", className=" + className
+				+ ", registerDate=" + registerDate + ", status=" + status + "]";
+	}
+	
+	
 }
