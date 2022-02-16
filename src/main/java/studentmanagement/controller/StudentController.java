@@ -1,11 +1,13 @@
 package studentmanagement.controller;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import studentmanagement.dto.ClassDTO;
 import studentmanagement.dto.StudentDTO;
 import studentmanagement.model.SearchBean;
@@ -191,7 +197,7 @@ public class StudentController {
 		return "redirect:/user/studentSearch";
 	}
 	
-	//Student Reports
+	//Student Reports PDF
 	@GetMapping("/studentReport")
 	public ResponseEntity<byte[]> studentReport() throws Exception, JRException {
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(sService.findAll());
@@ -205,5 +211,28 @@ public class StudentController {
 		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=StudentsReport.pdf");
 		
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	//Student Reports Excel
+	@GetMapping("/studentReport/excel")
+	public void getDocument(HttpServletResponse response) throws IOException, JRException {
+
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(sService.findAll());
+		JasperReport compileReport = JasperCompileManager
+				.compileReport(new FileInputStream("src/main/resources/reports/student/StudentReport.jrxml"));
+
+		Map<String, Object> map = new HashMap<>();
+		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+		
+		
+		JRXlsxExporter exporter = new JRXlsxExporter();
+		SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
+		reportConfigXLS.setSheetNames(new String[] { "Sheet 1" });
+		exporter.setConfiguration(reportConfigXLS);
+		exporter.setExporterInput(new SimpleExporterInput(report));
+		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+		response.setHeader("Content-Disposition", "attachment;filename=StudentsReport.xlsx");
+		response.setContentType("application/octet-stream");
+		exporter.exportReport();
 	}
 }

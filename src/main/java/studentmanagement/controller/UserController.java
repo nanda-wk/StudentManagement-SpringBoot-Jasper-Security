@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import studentmanagement.dto.UserDTO;
 import studentmanagement.model.SearchBean;
 import studentmanagement.model.UserBean;
@@ -249,20 +254,54 @@ public class UserController {
 		return "redirect:/user/userManagement";
 	}
 
-	// Student Reports
+	// Student Reports PDF
 	@GetMapping("/userReport")
-	public ResponseEntity<byte[]> studentReport() throws Exception, JRException {
+	public ResponseEntity<byte[]> studentReport(@RequestParam("type") String type, HttpServletResponse response)
+			throws Exception, JRException {
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(uService.findAll());
 		JasperReport compileReport = JasperCompileManager
 				.compileReport(new FileInputStream("src/main/resources/reports/user/UReport.jrxml"));
 
 		Map<String, Object> map = new HashMap<>();
 		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+
+		// PDF
 		byte[] dataPDF = JasperExportManager.exportReportToPdf(report);
+
+		// Excel
+		JRXlsxExporter exporter = new JRXlsxExporter();
+		SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
+		exporter.setConfiguration(reportConfigXLS);
+		exporter.setExporterInput(new SimpleExporterInput(report));
+		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=UsersReport.pdf");
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment;file=UsersReport.xlsx");
 
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(dataPDF);
+	}
+
+	//User Report Excel
+	@GetMapping("/userReport/excel")
+	public void getDocument(HttpServletResponse response) throws IOException, JRException {
+
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(uService.findAll());
+		JasperReport compileReport = JasperCompileManager
+				.compileReport(new FileInputStream("src/main/resources/reports/user/UReport.jrxml"));
+
+		Map<String, Object> map = new HashMap<>();
+		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+		
+		
+		JRXlsxExporter exporter = new JRXlsxExporter();
+		SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
+		reportConfigXLS.setSheetNames(new String[] { "Sheet 1" });
+		exporter.setConfiguration(reportConfigXLS);
+		exporter.setExporterInput(new SimpleExporterInput(report));
+		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+		response.setHeader("Content-Disposition", "attachment;filename=UsersReport.xlsx");
+		response.setContentType("application/octet-stream");
+		exporter.exportReport();
 	}
 }

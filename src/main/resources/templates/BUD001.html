@@ -50,8 +50,11 @@
 							type="button" value="Reset"
 							th:onclick="location.href='/user/studentSearch'" class="button" />
 						<input type="button" value="Download PDF"
-							th:onclick="location.href='/user/studentReport'" class="button" style="width:110px;"/>
-						<br /> <br />
+							th:onclick="location.href='/user/studentReport'" class="button"
+							style="width: 110px;" /> <input type="button"
+							value="Download Excel"
+							th:onclick="location.href='/user/studentReport/excel'" class="button"
+							style="width: 110px;" /> <br /> <br />
 						<div id="errormsg">
 							<label id="message" th:text="${error}"></label> <label
 								id="message" style="color: blue;" th:text="${success}"></label>
