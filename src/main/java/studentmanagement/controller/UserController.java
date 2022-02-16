@@ -256,7 +256,7 @@ public class UserController {
 
 	// Student Reports PDF
 	@GetMapping("/userReport")
-	public ResponseEntity<byte[]> studentReport(@RequestParam("type") String type, HttpServletResponse response)
+	public ResponseEntity<byte[]> studentReport()
 			throws Exception, JRException {
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(uService.findAll());
 		JasperReport compileReport = JasperCompileManager
