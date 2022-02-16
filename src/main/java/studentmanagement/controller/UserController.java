@@ -268,16 +268,8 @@ public class UserController {
 		// PDF
 		byte[] dataPDF = JasperExportManager.exportReportToPdf(report);
 
-		// Excel
-		JRXlsxExporter exporter = new JRXlsxExporter();
-		SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
-		exporter.setConfiguration(reportConfigXLS);
-		exporter.setExporterInput(new SimpleExporterInput(report));
-		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
-
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=UsersReport.pdf");
-		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment;file=UsersReport.xlsx");
 
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(dataPDF);
 	}
