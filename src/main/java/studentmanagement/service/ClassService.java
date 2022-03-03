@@ -22,8 +22,8 @@ public class ClassService {
 		return classRepo.findByIdOrName(id, name);
 	}
 
-	public void save(ClassDTO dto) {
-		classRepo.save(dto);
+	public ClassDTO save(ClassDTO dto) {
+		return classRepo.save(dto);
 	}
 	
 }

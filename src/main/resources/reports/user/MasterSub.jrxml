@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MasterSub" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="348bb047-5710-4a13-968b-e7653a94fc3d">
+	<parameter name="a1" class="java.lang.String"/>
+	<parameter name="a2" class="java.lang.String"/>
+	<parameter name="a3" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="cList" class="java.util.Collection"/>
+	<field name="uList" class="java.util.Collection"/>
+	<field name="sList" class="java.util.Collection"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="30" width="595" height="30" uuid="500697bb-359b-41d1-b04b-af6b289e7ffc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Student Management SubReport]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="92db9bf9-6a62-4910-935e-d6ee3f59cc97">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreport>
+					<reportElement x="0" y="20" width="595" height="30" uuid="83001df4-9a95-4e02-82e5-9bf3a3a5d353">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{cList})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{a1}]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement x="0" y="0" width="594" height="20" uuid="aa6d7d45-75d9-42ac-a6ad-2eaf5f7cada5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Class Report]]></text>
+				</staticText>
+			</frame>
+		</band>
+		<band height="50">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="-20" y="0" width="595" height="50" uuid="8497e46c-e9e1-4dbb-a24e-db0191e4b5b8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="594" height="20" uuid="9446d3ee-3cbd-4e7c-a788-7da36aaeb78c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Student Report]]></text>
+				</staticText>
+				<subreport>
+					<reportElement x="0" y="20" width="594" height="30" uuid="b3a550ef-865c-4b07-910a-b4835c90e14c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sList})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{a2}]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="-20" y="0" width="594" height="50" uuid="587dc06c-53f8-4a71-af79-24ac8315cc97">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<staticText>
+					<reportElement x="0" y="0" width="594" height="20" uuid="6bacdb1a-5142-412e-ac5b-749ba374fcdd">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[User Report]]></text>
+				</staticText>
+				<subreport>
+					<reportElement x="0" y="20" width="594" height="30" uuid="ea1d69b5-6604-47a9-b601-c79674401aef">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{uList})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{a3}]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

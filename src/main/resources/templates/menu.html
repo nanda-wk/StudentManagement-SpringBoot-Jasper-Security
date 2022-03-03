@@ -14,6 +14,16 @@
 		<li id="no-child"><a
 			th:href="@{/user/userManagement}"
 			style="font-weight: bold;">User Management</a></li>
+		<li>
+			<div>Reports</div>
+			<ul>
+				<li><a th:href="@{/user/subReport}">Subreport</a></li>
+				<li><a th:href="@{/user/studentReport}">Student Report PDF</a></li>
+				<li><a th:href="@{/user/studentReport/excel}">Student Report Excel</a></li>
+				<li><a th:href="@{/user/userReport}">User Report PDF</a></li>
+				<li><a th:href="@{/user/userReport/excel}">User Report Excel</a></li>
+			</ul>
+		</li>
 	</ul>
 </div>
 </div>

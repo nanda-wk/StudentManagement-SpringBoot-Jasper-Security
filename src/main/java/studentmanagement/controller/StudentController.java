@@ -79,7 +79,8 @@ public class StudentController {
 		dto.setClassName(bean.getClassName());
 
 		if (!dto.getStudentId().equals("") || !dto.getStudentName().equals("") || !dto.getClassName().equals("")) {
-			list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
+			list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(),
+					dto.getClassName());
 		} else {
 			list = sService.findAll();
 		}
@@ -95,7 +96,8 @@ public class StudentController {
 	public ModelAndView studentUpdateSetUp(@RequestParam("id") String id, ModelMap model) {
 		StudentDTO dto = new StudentDTO();
 		dto.setStudentId(id);
-		List<StudentDTO> list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
+		List<StudentDTO> list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(),
+				dto.getStudentName(), dto.getClassName());
 		StudentBean bean = new StudentBean();
 		for (StudentDTO res : list) {
 			bean.setStudentId(res.getStudentId());
@@ -129,7 +131,8 @@ public class StudentController {
 		dto.setRegisterDate(y + "-" + m + "-" + d);
 		dto.setStatus(bean.getStatus());
 		sService.save(dto);
-		List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
+		List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(),
+				dto.getClassName());
 		int i = l.size();
 		if (i == 0) {
 			model.addAttribute("error", "Student update Fail");
@@ -159,7 +162,8 @@ public class StudentController {
 
 		StudentDTO dto = new StudentDTO();
 		dto.setStudentId(bean.getStudentId());
-		List<StudentDTO> list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
+		List<StudentDTO> list = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(),
+				dto.getStudentName(), dto.getClassName());
 		if (list.size() != 0) {
 			model.addAttribute("error", "StudentID already exist!");
 			return "BUD002";
@@ -169,8 +173,9 @@ public class StudentController {
 			dto.setRegisterDate(y + "-" + m + "-" + d);
 			dto.setStatus(bean.getStatus());
 			sService.save(dto);
-			List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
-			int i = l.size(); 
+			List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(),
+					dto.getStudentName(), dto.getClassName());
+			int i = l.size();
 			if (i > 0) {
 				model.addAttribute("success", "Student successfully registered");
 //				return "redirect:/studentRegister";
@@ -187,44 +192,45 @@ public class StudentController {
 		StudentDTO dto = new StudentDTO();
 		dto.setStudentId(id);
 		sService.deleteById(dto.getStudentId());
-		List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(), dto.getClassName());
+		List<StudentDTO> l = sService.findByStudentIdOrStudentNameOrClassName(dto.getStudentId(), dto.getStudentName(),
+				dto.getClassName());
 		int i = l.size();
 		if (i > 0) {
-			ra.addAttribute("success", "Delete successful");
-		} else {
 			ra.addAttribute("error", "Delete Fail!");
+		} else {
+			ra.addAttribute("success", "Delete successful");
 		}
 		return "redirect:/user/studentSearch";
 	}
-	
-	//Student Reports PDF
+
+	// Student Reports PDF
 	@GetMapping("/studentReport")
 	public ResponseEntity<byte[]> studentReport() throws Exception, JRException {
-		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(sService.findAll());
-		JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/reports/student/StudentReport.jrxml"));
-		
-		Map<String, Object> map = new HashMap<>();
-		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
-		byte[] data = JasperExportManager.exportReportToPdf(report);
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=StudentsReport.pdf");
-		
-		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
-	}
-	
-	//Student Reports Excel
-	@GetMapping("/studentReport/excel")
-	public void getDocument(HttpServletResponse response) throws IOException, JRException {
-
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(sService.findAll());
 		JasperReport compileReport = JasperCompileManager
 				.compileReport(new FileInputStream("src/main/resources/reports/student/StudentReport.jrxml"));
 
 		Map<String, Object> map = new HashMap<>();
 		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
-		
-		
+		byte[] data = JasperExportManager.exportReportToPdf(report);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=StudentsReport.pdf");
+
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+
+	// Student Reports Excel
+	@GetMapping("/studentReport/excel")
+	public void getDocument(HttpServletResponse response) throws IOException, JRException {
+
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(sService.findAll());
+		JasperReport compileReport = JasperCompileManager
+				.compileReport(new FileInputStream("src/main/resources/reports/student/StudentReportExcel.jrxml"));
+
+		Map<String, Object> map = new HashMap<>();
+		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+
 		JRXlsxExporter exporter = new JRXlsxExporter();
 		SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
 		reportConfigXLS.setSheetNames(new String[] { "Sheet 1" });

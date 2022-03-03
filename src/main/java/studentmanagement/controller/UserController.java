@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -47,6 +46,7 @@ import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import studentmanagement.dto.UserDTO;
 import studentmanagement.model.SearchBean;
+import studentmanagement.model.SubreportBean;
 import studentmanagement.model.UserBean;
 import studentmanagement.service.UserService;
 
@@ -57,8 +57,8 @@ public class UserController {
 	@Autowired
 	UserService uService;
 
-	@Autowired
-	BCryptPasswordEncoder encode;
+	//@Autowired
+	//BCryptPasswordEncoder encode;
 
 	@ModelAttribute("currentUser")
 	public void getCurrentUserInfo(HttpServletRequest session, HttpSession hSession) {
@@ -260,7 +260,7 @@ public class UserController {
 			throws Exception, JRException {
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(uService.findAll());
 		JasperReport compileReport = JasperCompileManager
-				.compileReport(new FileInputStream("src/main/resources/reports/user/UReport.jrxml"));
+				.compileReport(new FileInputStream("src/main/resources/reports/user/UserReport.jrxml"));
 
 		Map<String, Object> map = new HashMap<>();
 		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
@@ -280,7 +280,7 @@ public class UserController {
 
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(uService.findAll());
 		JasperReport compileReport = JasperCompileManager
-				.compileReport(new FileInputStream("src/main/resources/reports/user/UReport.jrxml"));
+				.compileReport(new FileInputStream("src/main/resources/reports/user/UseReportExcel.jrxml"));
 
 		Map<String, Object> map = new HashMap<>();
 		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
@@ -295,5 +295,33 @@ public class UserController {
 		response.setHeader("Content-Disposition", "attachment;filename=UsersReport.xlsx");
 		response.setContentType("application/octet-stream");
 		exporter.exportReport();
+	}
+	
+	@GetMapping("/subReport")
+	public ResponseEntity<byte[]> subReport()
+			throws Exception, JRException {
+		List <SubreportBean> list = new ArrayList<>();
+		list.add(uService.findSub());
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		JasperReport compileReport = JasperCompileManager
+				.compileReport(new FileInputStream("src/main/resources/reports/subreport/MasterSubreport.jrxml"));
+		
+		String classList = "src/main/resources/reports/subreport/ClassSubreport.jasper";
+		String userList = "src/main/resources/reports/subreport/UserSubreport.jasper";
+		String studentList = "src/main/resources/reports/subreport/StudentSubreport.jasper";
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("classList", classList);
+		map.put("userList", userList);
+		map.put("studentList", studentList);
+		JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+
+		// PDF
+		byte[] dataPDF = JasperExportManager.exportReportToPdf(report);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=StudentManagementSubreport.pdf");
+
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(dataPDF);
 	}
 }
